@@ -8,7 +8,7 @@ This repo includes scripts and processed data for a morphometric analysis of lea
 
 ## Image preprocessing steps 
 
-1. Convert scans to binary images and split into individual leaves (python/PlantCV)
+1. Convert scans (RGB colorspace) to binary images and split into individual leaves (python/PlantCV)
 2. Export traditional morphometric descriptors (R/Momocs)
 3. Compute Elliptical Fourier Descriptors (EFDs) to describe leaf contours (R/Momocs)
 4. Landmark images to facilitate alignment 
