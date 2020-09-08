@@ -1,0 +1,202 @@
+---
+title: "New names for B. oleracea leaf scans"
+output: html_notebook
+author: "Sarah Turner-Hissong"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+
+# install development version of boxr
+# IMPORTANT: dev version needed - otherwise box_ls() caps at 1000 obs
+devtools::install_github("r-box/boxr")
+
+library(boxr)
+library(tidyverse)
+
+```
+
+```{r list image files}
+
+# list image files on box as a tibble
+box_auth()
+
+box_ls() # look up folder ids
+box_ls(75250802782) # list files in processed images folder
+
+files <- tibble(old_name = as.data.frame(box_ls(75250802782))$name) %>%
+  # special exception for B_oleracea115_D_5.5855.tif - should be leaf 4?
+  mutate(old_edit = ifelse(old_name == "B_oleracea067_D_5.692.tif",
+                           "B_oleracea067_D_leaf4_5.692.tif", 
+                           # two leaves for 115D - switched to leaves 2 & 3
+                           ifelse(old_name == "B_oleracea115_D_leaf4_1.8275.tif",
+                                  "B_oleracea115_D_leaf2_3_1.8275.tif",
+                                  ifelse(old_name == "B_oleracea115_D_leaf4_2.1518.tif",
+                                         "B_oleracea115_D_leaf2_3_2.1518.tif", old_name))))
+
+```
+
+### Edit file names with standard format (B_oleracea000_A_d.dddd.bmp)
+
+```{r edit filenames}
+
+df <- files %>%
+  filter(!grepl("leaf", old_edit, ignore.case = TRUE)) %>% # remove filenames that don't match base pattern
+  # separate filename into categories 
+  separate(old_edit, sep = "_", 
+           into = c("genus", "species", "rep", "leaf_id"), remove = FALSE) %>%
+  group_by(species, rep) %>%
+  mutate(accession = str_replace(species, "oleracea", "oleracea_"),
+         leaf_id = gsub(".tif", "", leaf_id), # remove ".tif" file extension
+         leaf_id2 = ifelse(leaf_id == min(leaf_id), "leaf2", 
+                           ifelse(leaf_id == max(leaf_id), "leaf4", "leaf3")),
+         new_name = paste0(paste(genus, accession, rep, leaf_id2, sep = "_"), ".jpg")) %>%
+  ungroup() 
+
+df
+
+```
+
+### Edit file names for accessions with multiple scans
+
+```{r edit filenames for leaves 2 and 3}
+
+df2_3 <- files %>%
+  filter(grepl("leaf2_3", old_edit, ignore.case = TRUE)) %>% # remove filenames that don't match base pattern
+  # separate filename into categories 
+  separate(old_edit, sep = "_", 
+           into = c("genus", "species", "rep", "fill1", "fill2", "leaf_id"), 
+           remove = FALSE) %>%
+  group_by(species, rep) %>%
+  mutate(accession = str_replace(species, "oleracea", "oleracea_"),
+    leaf_id = gsub(".tif", "", leaf_id), # remove ".tif" file extension
+         leaf_id2 = ifelse(leaf_id == min(leaf_id), "leaf2", "leaf3"),
+         new_name = paste0(paste(genus, accession, rep, leaf_id2, sep = "_"), ".jpg")) %>%
+  ungroup()
+
+df2_3
+
+```
+
+```{r edit filenames for leaves 2 and 4}
+
+df2_4 <- files %>%
+  filter(grepl("leaf2_4_", old_edit, ignore.case = TRUE)) %>% # remove filenames that don't match base pattern
+  # separate filename into categories 
+  separate(old_edit, sep = "_", 
+           into = c("genus", "species", "rep", "fill1", "fill2", "leaf_id"), 
+           remove = FALSE) %>%
+  group_by(species, rep) %>%
+  mutate(accession = str_replace(species, "oleracea", "oleracea_"),
+    leaf_id = gsub(".tif", "", leaf_id), # remove ".tif" file extension
+         leaf_id2 = ifelse(leaf_id == min(leaf_id), "leaf3", "leaf4"),
+         new_name = paste0(paste(genus, accession, rep, leaf_id2, sep = "_"), ".jpg")) %>%
+  ungroup()
+
+df2_4
+
+```
+
+```{r edit filenames for leaves 3 and 4}
+
+df3_4 <- files %>%
+  filter(grepl("leaf3_4_", old_edit, ignore.case = TRUE)) %>% # remove filenames that don't match base pattern
+  # separate filename into categories 
+  separate(old_edit, sep = "_", 
+           into = c("genus", "species", "rep", "fill1", "fill2", "leaf_id"), 
+           remove = FALSE) %>%
+  group_by(species, rep) %>%
+  mutate(accession = str_replace(species, "oleracea", "oleracea_"),
+    leaf_id = gsub(".tif", "", leaf_id), # remove ".bmp" file extension
+         leaf_id2 = ifelse(leaf_id == min(leaf_id), "leaf3", "leaf4"),
+         new_name = paste0(paste(genus, accession, rep, leaf_id2, sep = "_"), ".tif")) %>%
+  ungroup()
+
+df3_4
+
+```
+
+```{r edit filenames for single leaves}
+
+df1 <- files %>%
+  filter(grepl("leaf1_\\d.\\d+.tif", old_edit, ignore.case = TRUE)) %>% # remove filenames that don't match base pattern
+  # separate filename into categories 
+  separate(old_edit, sep = "_", 
+           into = c("genus", "species", "rep", "leaf_id", "leaf_id2"), 
+           remove = FALSE) %>%
+  mutate(accession = str_replace(species, "oleracea", "oleracea_"),
+         new_name = paste0(paste(genus, accession, rep, leaf_id, sep = "_"), ".jpg")) 
+
+df2 <- files %>%
+  filter(grepl("leaf2_\\d.\\d+.tif", old_edit, ignore.case = TRUE)) %>% # remove filenames that don't match base pattern
+  # separate filename into categories 
+  separate(old_edit, sep = "_", 
+           into = c("genus", "species", "rep", "leaf_id", "leaf_id2"), 
+           remove = FALSE) %>%
+  mutate(accession = str_replace(species, "oleracea", "oleracea_"),
+         new_name = paste0(paste(genus, accession, rep, leaf_id, sep = "_"), ".jpg")) 
+
+df3 <- files %>%
+  filter(grepl("leaf3_\\d.\\d+.tif", old_edit, ignore.case = TRUE)) %>% # remove filenames that don't match base pattern
+  # separate filename into categories 
+  separate(old_edit, sep = "_", 
+           into = c("genus", "species", "rep", "leaf_id", "leaf_id2"), 
+           remove = FALSE) %>%
+  mutate(accession = str_replace(species, "oleracea", "oleracea_"),
+         new_name = paste0(paste(genus, accession, rep, leaf_id, sep = "_"), ".jpg")) 
+
+df4 <- files %>%
+  filter(grepl("leaf4", old_edit, ignore.case = TRUE)) %>% # remove filenames that don't match base pattern
+  # separate filename into categories 
+  separate(old_edit, sep = "_", 
+           into = c("genus", "species", "rep", "leaf_id", "leaf_id2"), 
+           remove = FALSE) %>%
+  mutate(accession = str_replace(species, "oleracea", "oleracea_"),
+         new_name = paste0(paste(genus, accession, rep, leaf_id, sep = "_"), ".jpg")) 
+
+df4 
+
+```
+
+### Combine them all! 
+
+Should have 2598 files 
+
+```{r combine new filenames}
+
+new_names <- bind_rows(df, df2, df3, df4, df2_3, df2_4, df3_4) %>%
+  # exception for B_oleracea153_B_5.5855.bmp (it's a stake!)
+  mutate(new_name = ifelse(old_name == "B_oleracea153_B_5.5855.tif", 
+                           "i_am_a_stake.tif", new_name),
+         # convert edited names back to original for renaming
+         old_name = ifelse(old_name == "B_oleracea067_D_leaf4_5.692.tif",
+                           "B_oleracea067_D_5.692.tif", 
+                           # two leaves for 115D - switched to leaves 2 & 3
+                           ifelse(old_name %in% c("B_oleracea115_D_leaf2_3_1.8275.tif", 
+                                                "B_oleracea115_D_leaf2_3_2.1518.tif"),
+                                  gsub("2_3", "4", old_name), old_name)),
+         old_name2 = paste0("nopetiole_", old_name),
+         new_name2 = paste0("nopetiole_", new_name)) %>% 
+  mutate_if(is.character, funs(str_replace(., ".tif", ".jpg"))) %>% 
+  select(old_name, new_name, old_name2, new_name2, species, accession, rep, leaf_id, leaf_id2) 
+
+count(new_names)
+
+new_names
+  
+box_write(new_names, "filenames.txt", dir_id = 66844776436)
+
+```
+
+### Check for duplicates
+
+```{r check for duplicates}
+
+dupes <- new_names[duplicated(new_names$new_name) | duplicated(new_names$new_name, fromLast = TRUE),]
+
+dupes
+
+```
+
+
+
