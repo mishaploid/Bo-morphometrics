@@ -1,44 +1,21 @@
-# Brassica oleracea leaf morphometrics
+# Morphometric analysis of Brassica oleracea leaves 
 
-Analysis of leaf shape for a diversity panel of Brassica oleracea and wild C genome relatives to examine differences across developmental stages (leaves 2, 3, and 4) and accessions. 
+This repo includes scripts and processed data for a morphometric analysis of leaf scans in a diversity panel of Brassica oleracea and wild C genome relatives. The goal is to examine variation in leaf shape across developmental stages (leaves 2, 3, and 4) and accessions. 
 
-## Getting Started
-
-Recommend following the excellent guidleines provided by Laura Klein and Harlan Svoboda (https://bio-protocol.org/e2269)
-
-### Prerequisites
-
-All open source software 
-ImageJ (https://imagej.nih.gov/ij/)
-SHAPE (http://lbm.ab.a.u-tokyo.ac.jp/iwata/shape/index.html) - requires Winebottler if not installing on Windows (http://winebottler.kronenberg.org/)
-R (https://www.r-project.org/)
+## Prerequisites
+* R (https://www.r-project.org/)
 
 ```
 Examples 
 
 ```
-### Convert scans to binary images and crop individual leaves
+## Image preprocessing steps 
 
-ImageJ macro 
-
-## Convert TIF binary images to BMP with RGB
-
-Image J > Process > Macro
-
-Select Input/Output directories 
-
-Paste text from src/convert_to_bmp.txt
-
-
-### Rename files to specify leaf number based on position from ImageJ
-
-src/edit_filenames.Rmd (R Notebook) 
-
-src/rename_files.sh (bash script to rename files based on output from edit_filenames.Rmd)
-
-### Landmarking 
-
-![Landmark positions](reports/Landmarking.png)
+1. Convert scans to binary images and crop individual leaves (python/PlantCV)
+2. Export traditional morphometric descriptors (R/Momocs)
+3. Compute Elliptical Fourier Descriptors (EFDs) to describe leaf contours (R/Momocs)
+4. Landmark images to facilitate alignment 
+   <img src="reports/Landmarking.png" width="200" height="200"> 
 
 
 ## Authors
@@ -50,6 +27,10 @@ src/rename_files.sh (bash script to rename files based on output from edit_filen
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Resources
+[Comprehensive Methods for Leaf Geometric Morphometric Analyses](https://bio-protocol.org/e2269) by Laura Klein and Harlan Svoboda 
+
 
 ## Acknowledgments
 
