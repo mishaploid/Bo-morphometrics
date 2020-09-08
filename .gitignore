@@ -3,11 +3,12 @@
 
 data/*
 GWAS/*
-OriginalScans/*
+OrginalScans/*
 segmented_images/*
 segmented_nopetiole/*
 Snogerup_etal_Leaves/*
 testdir/*
+imagej_version/*
 
 # Compiled source #
 ###################
@@ -36,6 +37,9 @@ testdir/*
 *.log
 *.sql
 *.sqlite
+.Rhistory
+src/*.Rhistory
+notebooks/*.ipynb_checkpoints/*
 
 # OS generated files #
 ######################
