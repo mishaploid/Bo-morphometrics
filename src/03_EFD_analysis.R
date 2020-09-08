@@ -15,10 +15,14 @@ load("~/Box/BoleraceaLeafScans/data/processed/Snogerup_landmarked.RData")
 
 # specify outlier images --------------------------------------------------
 
-pca_outliers <- c("B_oleracea012_A_1_p1_mask", "B_oleracea023_B_2_p2_mask",
-                  "B_oleracea034_B_leaf2_3_1_p1_mask", "B_oleracea117_B_2_p2_mask",
-                  "B_oleracea157_B_0_p0_mask", "B_oleracea207_C_0_p0_mask",
-                  "B_oleracea218_A_0_p0_mask", "B_oleracea232_D_0_p0_mask")
+pca_outliers <- c("B_oleracea012_A_1_p1_mask", 
+                  "B_oleracea023_B_2_p2_mask",
+                  "B_oleracea034_B_leaf2_3_1_p1_mask", 
+                  "B_oleracea117_B_2_p2_mask",
+                  "B_oleracea157_B_0_p0_mask", 
+                  "B_oleracea207_C_0_p0_mask",
+                  "B_oleracea218_A_0_p0_mask", 
+                  "B_oleracea232_D_0_p0_mask")
 
 # align, center, and scale Snogerup images --------------------------------
 
@@ -61,10 +65,12 @@ leaves_Snogerup %>%
 ggsave("~/Box/BoleraceaLeafScans/reports/calibrate_reconstructions.png")
 
 # compute elliptical Fourier descriptors (EFDs)
+# EFDs with symmetric & asymmetric variation 
 leaves_f_asym <- efourier(leaves_Snogerup,
                           nb.h = 7,
                           norm = FALSE)
 
+# EFDs with symmetric variation only 
 leaves_f_sym <- efourier(leaves_Snogerup, 
                      nb.h = 7,
                      norm = FALSE) %>% 
@@ -74,7 +80,7 @@ leaves_f_sym <- efourier(leaves_Snogerup,
 ## Principal component analysis
 ################################################################################
 
-leaves.p <- PCA(leaves_f_asym) 
+leaves.p <- PCA(leaves_f_sym) 
 
 # export the principal components
 leaves.p %>% 
