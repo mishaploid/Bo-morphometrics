@@ -36,6 +36,11 @@ src/edit_filenames.Rmd (R Notebook)
 
 src/rename_files.sh (bash script to rename files based on output from edit_filenames.Rmd)
 
+### Landmarking 
+
+![Landmark positions](reports/Landmarking.png)
+
+
 ## Authors
 
 * **Sarah Turner-Hissong**
