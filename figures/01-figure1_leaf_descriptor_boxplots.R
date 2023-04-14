@@ -9,6 +9,7 @@ library(tidyverse)
 library(Momocs)
 library(RColorBrewer)
 library(cowplot)
+library(ggridges)
 
 load('data/processed/02-aligned_scans.RData')
 
@@ -105,3 +106,70 @@ all %>%
 
 ggsave("figures/FigS1-shape_descriptor_boxplots_by_leafnum.png", 
        width = 10, height = 10)
+
+
+# density plots for distinguishing features -------------------------------
+
+# convexity
+con_plot <- ggplot(all, aes(x = convexity, 
+                y = fct_reorder(comName, -convexity),
+                fill = comName)) + 
+geom_density_ridges2(jittered_points = TRUE, 
+                     scale = .95, 
+                     rel_min_height = .01,
+                     point_shape = "|", 
+                     point_size = 1, 
+                     size = 0.25,
+                     position = position_points_jitter(height = 0)) +
+  theme_ridges(center_axis_labels = TRUE) + 
+  theme(legend.position = 'none',
+        axis.title.y = element_blank(),
+        text = element_text(size = 12),
+        axis.text = element_text(size = 10)) + 
+  scale_fill_manual(values = cols) +
+  ylab('Common Name') 
+
+# circularity 
+cir_plot <- ggplot(all, aes(x = circularity, 
+                y = fct_reorder(comName, -circularity),
+                fill = comName)) + 
+  geom_density_ridges2(jittered_points = TRUE, 
+                       scale = .95, 
+                       rel_min_height = .01,
+                       point_shape = "|", 
+                       point_size = 1, 
+                       size = 0.25,
+                       position = position_points_jitter(height = 0)) +
+  theme_ridges(center_axis_labels = TRUE) + 
+  theme(legend.position = 'none',
+        axis.title.y = element_blank(),
+        text = element_text(size = 12),
+        axis.text = element_text(size = 10)) + 
+  scale_fill_manual(values = cols) +
+  ylab('Common Name')
+
+# aspect ratio
+ar_plot <- ggplot(all, aes(x = aspect_ratio, 
+                y = fct_reorder(comName, -aspect_ratio),
+                fill = comName)) + 
+  geom_density_ridges2(jittered_points = TRUE, 
+                       scale = .95, 
+                       rel_min_height = .01,
+                       point_shape = "|", 
+                       point_size = 1, 
+                       size = 0.25,
+                       position = position_points_jitter(height = 0)) +
+  theme_ridges(center_axis_labels = TRUE) + 
+  theme(legend.position = 'none',
+        axis.title.y = element_blank(),
+        text = element_text(size = 12),
+        axis.text = element_text(size = 10)) + 
+  scale_fill_manual(values = cols) +
+  ylab('Common Name') 
+
+plot_grid(con_plot, cir_plot, ar_plot, nrow = 1)
+
+ggsave('figures/misc-ggridge_plots_for_key_features.png',
+       bg = 'white',
+       height = 6,
+       width = 10)
