@@ -10,8 +10,11 @@ library(Momocs)
 library(viridis)
 
 # load data ---------------------------------------------------------
-load("~/Box/BoleraceaLeafScans/data/processed/aligned_scans.RData")
-load("~/Box/BoleraceaLeafScans/data/processed/Snogerup_landmarked.RData")
+
+# landmarked outlines from Snogerup et al. 1990
+load("data/intermediate/Snogerup_landmarked.RData")
+# aligned scans from diversity panel 
+load("data/processed/01-aligned_scans.RData")
 
 # specify outlier images --------------------------------------------------
 
